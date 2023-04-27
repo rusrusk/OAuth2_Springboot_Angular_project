@@ -1,0 +1,23 @@
+services:
+  db:
+    container_name: postgresql
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: boot
+      POSTGRES_DB: safe
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - postgres
+        
+        
+        
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
