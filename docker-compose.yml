@@ -1,23 +1,25 @@
 services:
   db:
-    container_name: postgresql
-    image: postgres
+    container_name: mysql
+    image: mysql
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: boot
-      POSTGRES_DB: safe
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: boot
+      MYSQL_ROOT_PASSWORD: boot
+      MYSQL_DATABASE: safe
     ports:
-      - "5432:5432"
+      - 3306:3306
     volumes:
-      - postgres:/data/postgres
+      - db:/var/lib/mysql
     networks:
-      - postgres
+      - db
+    restart: unless-stopped
         
         
         
 networks:
-  postgres:
+  db:
     driver: bridge
 
 volumes:
-  postgres:
+  db:

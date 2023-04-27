@@ -15,13 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
-    @Enumerated
-    private Role roles;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.name()));
+        return List.of(new SimpleGrantedAuthority(user.getAuthority()));
     }
 
     @Override
@@ -31,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getUsername();
     }
 
     @Override
