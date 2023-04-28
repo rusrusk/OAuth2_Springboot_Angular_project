@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.ruslank.safe_project.cors.CustomCorsHandler;
 import com.ruslank.safe_project.security.keys.JwksKeys;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @AllArgsConstructor
@@ -34,18 +36,20 @@ public class AuthorizationConfiguration {
 
     private final JwksKeys jwksKeys;
 
+    private final CustomCorsHandler customCorsHandler;
+
     @Bean
     @Order(1)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         OAuth2AuthorizationServerConfiguration
                 .applyDefaultSecurity(httpSecurity);
-        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults());
-
-        httpSecurity.exceptionHandling(
-                e -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-        );
-
+//        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+//                .oidc(Customizer.withDefaults());
+//
+//        httpSecurity.exceptionHandling(
+//                e -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+//        );
+        customCorsHandler.corsHandler(httpSecurity);
         return httpSecurity
                 .build();
     }
@@ -53,6 +57,9 @@ public class AuthorizationConfiguration {
         @Bean
         @Order(2)
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+            customCorsHandler.corsHandler(httpSecurity);
+
             return httpSecurity
                     .formLogin()
                     .and()
@@ -91,5 +98,5 @@ public class AuthorizationConfiguration {
     }
 }
 
-//http://localhost:8080/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://127.0.0.1:3000/authorized&code_challenge=QYPAZ5NU8yvtlQ9erXrUYR-T5AGCjCF47vN-KsaI2A8&code_challenge_method=S256
+//http://localhost:8080/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:3000/authorized&code_challenge=QYPAZ5NU8yvtlQ9erXrUYR-T5AGCjCF47vN-KsaI2A8&code_challenge_method=S256
 //http://localhost:8080/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://127.0.0.1:3000/authorized&code_challenge=QYPAZ5NU8yvtlQ9erXrUYR-T5AGCjCF47vN-KsaI2A8&code_challenge_method=S256

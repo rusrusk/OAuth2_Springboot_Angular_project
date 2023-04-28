@@ -59,7 +59,6 @@ public class Client {
                 .redirectUri(client.getRedirectUri())
                 .authorizationGrantType(new AuthorizationGrantType(client.getGrantType()))
                 .clientAuthenticationMethod(new ClientAuthenticationMethod(client.getAuthMethod()))
-                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(10)).build())
                 .build();
     }
 }
