@@ -1,9 +1,7 @@
 package com.ruslank.safe_project.services;
 
 
-import com.ruslank.safe_project.entities.Role;
 import com.ruslank.safe_project.entities.User;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

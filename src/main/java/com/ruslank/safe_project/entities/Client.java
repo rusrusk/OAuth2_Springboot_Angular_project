@@ -27,7 +27,7 @@ public class Client {
     private String grantType;
 
     public static Client from(RegisteredClient registeredClient) {
-        var client = new Client();
+        Client client = new Client();
         client.setClientId(registeredClient.getClientId());
         client.setSecret(registeredClient.getClientSecret());
         client.setScope(registeredClient.getScopes()

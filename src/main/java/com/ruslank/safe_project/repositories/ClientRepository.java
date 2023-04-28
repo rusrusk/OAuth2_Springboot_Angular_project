@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Query("SELECT c FROM Client c WHERE c.clientId = :clientId")
-    Optional<Client> findByClientId(String clientId);
+    public Optional<Client> findByClientId(String clientId);
 }
