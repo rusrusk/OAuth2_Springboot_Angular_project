@@ -5,7 +5,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.ruslank.safe_project.cors.CustomCorsHandler;
+//import com.ruslank.safe_project.cors.CustomCorsHandler;
+//import com.ruslank.safe_project.cors.CustomCorsHandler;
 import com.ruslank.safe_project.security.keys.JwksKeys;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,8 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,20 +39,33 @@ public class AuthorizationConfiguration {
 
     private final JwksKeys jwksKeys;
 
-    private final CustomCorsHandler customCorsHandler;
+//    private final CustomCorsHandler customCorsHandler;
 
     @Bean
     @Order(1)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors(
+                c -> {
+                    CorsConfigurationSource source = s -> {
+                        CorsConfiguration corsConfiguration = new CorsConfiguration();
+                        corsConfiguration.setAllowCredentials(true);
+                        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+                        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+                        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
+                        return corsConfiguration;
+                    };
+                    c.configurationSource(source);
+                }
+        );
         OAuth2AuthorizationServerConfiguration
                 .applyDefaultSecurity(httpSecurity);
-//        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-//                .oidc(Customizer.withDefaults());
-//
-//        httpSecurity.exceptionHandling(
-//                e -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-//        );
-        customCorsHandler.corsHandler(httpSecurity);
+        httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+                .oidc(Customizer.withDefaults());
+
+        httpSecurity.exceptionHandling(
+                e -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+        );
+//        customCorsHandler.corsHandler(httpSecurity);
         return httpSecurity
                 .build();
     }
@@ -58,7 +74,7 @@ public class AuthorizationConfiguration {
         @Order(2)
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-            customCorsHandler.corsHandler(httpSecurity);
+
 
             return httpSecurity
                     .formLogin()
@@ -67,8 +83,27 @@ public class AuthorizationConfiguration {
                     .anyRequest()
                     .authenticated()
                     .and()
+                    .cors()
+                    .and()
+                    .csrf().disable()
                     .build();
         }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**");
+//                        .allowedOrigins("http://localhost:3000")
+//                        .allowedMethods("*")
+//                        .allowedHeaders("*")
+//                        .exposedHeaders("Access-Control-Allow-Origin"); // add this line
+//                        .allowCredentials(true)
+//                        .maxAge(3600);
+            }
+        };
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
