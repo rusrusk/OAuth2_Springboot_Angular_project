@@ -22,53 +22,54 @@ public class SecurityConfiguration {
 
 //    private final CustomCorsHandler customCorsHandler;
 
-//    @Value("${jwkUri}")
-//    private String jwkUri;
+    @Value("${jwkUri}")
+    private String jwkUri;
 
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors();
 //        customCorsHandler.corsHandler(httpSecurity);
-        httpSecurity.cors(
-                c -> {
-                    CorsConfigurationSource configurationSource = source -> {
-                        CorsConfiguration corsConfiguration = new CorsConfiguration();
-                        corsConfiguration.setAllowCredentials(true);
-                        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-                        corsConfiguration.setAllowedHeaders(List.of("*"));
-                        corsConfiguration.setAllowedMethods(List.of("*"));
-                        return  corsConfiguration;
-                    };
-                    c.configurationSource(configurationSource);
-                }
-        );
+//        httpSecurity.cors(
+//                c -> {
+//                    CorsConfigurationSource configurationSource = source -> {
+//                        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//                        corsConfiguration.setAllowCredentials(true);
+//                        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+//                        corsConfiguration.setAllowedHeaders(List.of("*"));
+//                        corsConfiguration.setAllowedMethods(List.of("*"));
+//                        return  corsConfiguration;
+//                    };
+//                    c.configurationSource(configurationSource);
+//                }
+//        );
         return httpSecurity.oauth2ResourceServer(
-                j -> j.jwt().jwkSetUri("http://localhost:8080/oauth2/jwks")
+                j -> j.jwt().jwkSetUri(jwkUri)
         ).authorizeHttpRequests()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .cors()
-                .and()
-                .csrf().disable()
+//                .cors()
+//                .and()
+//                .csrf().disable()
                 .build();
     }
 
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("*")
-                        .allowedHeaders("*")
-                        .exposedHeaders("Access-Control-Allow-Origin") // add this line
-                        .allowCredentials(true)
-                        .maxAge(3600);
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("http://localhost:3000")
+//                        .allowedMethods("*")
+//                        .allowedHeaders("*")
+//                        .exposedHeaders("Access-Control-Allow-Origin") // add this line
+//                        .allowCredentials(true)
+//                        .maxAge(3600);
+//            }
+//        };
+//    }
 }
