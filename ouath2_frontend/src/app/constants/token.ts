@@ -3,4 +3,4 @@ const tokenUrl = (tokenCode: string) => {
 	return `http://localhost:8080/oauth2/token?client_id=client&redirect_uri=${redirectUri}`;
 }
 
-export default tokenUrl;
+export default tokenUrl;	
