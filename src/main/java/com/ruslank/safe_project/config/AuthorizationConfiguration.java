@@ -44,19 +44,7 @@ public class AuthorizationConfiguration {
     @Bean
     @Order(1)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors(
-                c -> {
-                    CorsConfigurationSource source = s -> {
-                        CorsConfiguration corsConfiguration = new CorsConfiguration();
-                        corsConfiguration.setAllowCredentials(true);
-                        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-                        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-                        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
-                        return corsConfiguration;
-                    };
-                    c.configurationSource(source);
-                }
-        );
+        httpSecurity.cors();
         OAuth2AuthorizationServerConfiguration
                 .applyDefaultSecurity(httpSecurity);
         httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
@@ -77,33 +65,34 @@ public class AuthorizationConfiguration {
 
 
             return httpSecurity
+                    .cors().and()
                     .formLogin()
                     .and()
                     .authorizeHttpRequests()
                     .anyRequest()
                     .authenticated()
                     .and()
-                    .cors()
-                    .and()
-                    .csrf().disable()
+//                    .cors()
+//                    .and()
+//                    .csrf().disable()
                     .build();
         }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**");
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
 //                        .allowedOrigins("http://localhost:3000")
 //                        .allowedMethods("*")
 //                        .allowedHeaders("*")
-//                        .exposedHeaders("Access-Control-Allow-Origin"); // add this line
+//                        .exposedHeaders("Access-Control-Allow-Origin") // add this line
 //                        .allowCredentials(true)
 //                        .maxAge(3600);
-            }
-        };
-    }
+//            }
+//        };
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
